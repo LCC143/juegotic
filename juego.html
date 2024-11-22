@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animación de Cuadrado</title>
+    <title>Cuadrado que Desaparece</title>
     <style>
         body {
             margin: 0;
@@ -55,8 +55,24 @@
 </head>
 <body>
     <div class="contenedor">
-        <div class="cuadrado-rojo"></div>
+        <div class="cuadrado-rojo" id="cuadradoRojo"></div>
         <div class="cuadrado-blanco"></div>
     </div>
+
+    <script>
+        // Función para detectar cuando el cuadrado rojo llega al cuadrado blanco
+        const cuadradoRojo = document.getElementById('cuadradoRojo');
+
+        // Esperamos a que la animación termine
+        cuadradoRojo.addEventListener('animationend', function() {
+            // Ahora que la animación terminó, habilitamos la funcionalidad de desaparecer con una tecla
+            document.addEventListener('keydown', function(event) {
+                // Detectamos si se presiona la tecla 'Enter' (puedes cambiarla por otra tecla)
+                if (event.key === 'Enter') {
+                    cuadradoRojo.style.display = 'none'; // Hacemos desaparecer el cuadrado
+                }
+            });
+        });
+    </script>
 </body>
 </html>
