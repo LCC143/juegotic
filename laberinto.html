@@ -6,167 +6,183 @@
     <title>Laberinto</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            overflow: hidden;
+            background: linear-gradient(270deg, #ff0000, #f3ff00, #003eff);
+        }
+
+        #maze {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: #f0f0f0;
+            box-sizing: border-box;
         }
-        #maze {
-            width: 300px;
-            height: 300px;
-            background: #ddd;
-            position: relative;
-            border: 2px solid #000;
+
+        .cell {
+            width: 20px;
+            height: 20px;
+            background-color: #ddd;
+            border: 1px solid #aaa;
         }
-        #player {
-            width: 30px;
-            height: 30px;
-            background-color: blue;
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-radius: 50%;
+
+        .wall {
+            background-color: #000;
         }
-        #timer {
+
+        .player {
+            background-color: red;
+        }
+
+        .goal {
+            background-color: green;
+        }
+
+        #debug {
             position: absolute;
             top: 10px;
-            right: 10px;
+            left: 10px;
             font-size: 18px;
-        }
-        .wall {
-            position: absolute;
-            background-color: #333;
-        }
-        .end-point {
-            position: absolute;
-            background-color: green;
-            width: 30px;
-            height: 30px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px;
         }
     </style>
 </head>
 <body>
-    <div id="maze">
-        <div id="player"></div>
-        <div class="wall" style="top: 30px; left: 30px; width: 240px; height: 10px;"></div>
-        <div class="wall" style="top: 90px; left: 100px; width: 150px; height: 10px;"></div>
-        <div class="end-point" style="top: 270px; left: 270px;"></div>
-        <div id="timer">Tiempo: 60</div>
-    </div>
+    <div id="maze"></div>
+    <div id="debug"></div>
 
     <script>
-        let player = document.getElementById('player');
-        let maze = document.getElementById('maze');
-        let timerDisplay = document.getElementById('timer');
-        let endPoint = document.querySelector('.end-point');
-        let walls = document.querySelectorAll('.wall');
-        let playerPos = { x: 0, y: 0 };
-        let gameOver = false;
-        let timeLeft = 60;
-        let timer;
+        const mazeWidth = 30;  // Ancho del laberinto (en celdas)
+        const mazeHeight = 30; // Alto del laberinto (en celdas)
+        const cellSize = 20;   // Tamaño de cada celda en px
+        const maze = document.getElementById('maze');
+        const debug = document.getElementById('debug');
 
-        // Movimiento del jugador
-        let keysPressed = {};
-        document.addEventListener('keydown', (e) => {
-            keysPressed[e.key] = true;
-        });
-        document.addEventListener('keyup', (e) => {
-            keysPressed[e.key] = false;
-        });
+        let playerPosition = { x: 1, y: 1 };
+        let goalPosition = { x: mazeWidth - 2, y: mazeHeight - 2 };
+        let mazeData = [];
 
-        function movePlayer() {
-            if (gameOver) return;
+        // Generación del laberinto
+        function generateMaze() {
+            // Inicialización del laberinto con todas las celdas como paredes
+            mazeData = Array.from({ length: mazeHeight }, () => Array(mazeWidth).fill(1));
 
-            if (keysPressed['ArrowUp'] || keysPressed['w']) {
-                playerPos.y -= 5;
+            // Algoritmo de Backtracking para generar el laberinto
+            const stack = [];
+            stack.push({ x: 1, y: 1 });
+            mazeData[1][1] = 0; // Empezamos en la posición (1, 1)
+
+            while (stack.length) {
+                const current = stack[stack.length - 1];
+                const { x, y } = current;
+                const directions = [];
+
+                // Revisar las direcciones disponibles para movernos
+                if (x + 2 < mazeWidth && mazeData[y][x + 2] === 1) directions.push('right');
+                if (y + 2 < mazeHeight && mazeData[y + 2][x] === 1) directions.push('down');
+                if (x - 2 > 0 && mazeData[y][x - 2] === 1) directions.push('left');
+                if (y - 2 > 0 && mazeData[y - 2][x] === 1) directions.push('up');
+
+                if (directions.length) {
+                    const direction = directions[Math.floor(Math.random() * directions.length)];
+
+                    switch (direction) {
+                        case 'right':
+                            mazeData[y][x + 1] = 0;
+                            mazeData[y][x + 2] = 0;
+                            stack.push({ x: x + 2, y });
+                            break;
+                        case 'down':
+                            mazeData[y + 1][x] = 0;
+                            mazeData[y + 2][x] = 0;
+                            stack.push({ x, y: y + 2 });
+                            break;
+                        case 'left':
+                            mazeData[y][x - 1] = 0;
+                            mazeData[y][x - 2] = 0;
+                            stack.push({ x: x - 2, y });
+                            break;
+                        case 'up':
+                            mazeData[y - 1][x] = 0;
+                            mazeData[y - 2][x] = 0;
+                            stack.push({ x, y: y - 2 });
+                            break;
+                    }
+                } else {
+                    stack.pop();  // Retroceder si no hay direcciones disponibles
+                }
             }
-            if (keysPressed['ArrowDown'] || keysPressed['s']) {
-                playerPos.y += 5;
-            }
-            if (keysPressed['ArrowLeft'] || keysPressed['a']) {
-                playerPos.x -= 5;
-            }
-            if (keysPressed['ArrowRight'] || keysPressed['d']) {
-                playerPos.x += 5;
-            }
 
-            checkCollisions();
-            checkWinCondition();
+            mazeData[goalPosition.y][goalPosition.x] = 2; // Meta
 
-            // Actualizar la posición del jugador
-            player.style.left = playerPos.x + 'px';
-            player.style.top = playerPos.y + 'px';
+            renderMaze();
         }
 
-        // Verificar si el jugador colide con las paredes
-        function checkCollisions() {
-            for (let wall of walls) {
-                let wallRect = wall.getBoundingClientRect();
-                let playerRect = player.getBoundingClientRect();
+        // Renderizar el laberinto
+        function renderMaze() {
+            maze.innerHTML = ''; // Limpiar el laberinto
+            for (let y = 0; y < mazeHeight; y++) {
+                for (let x = 0; x < mazeWidth; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    if (mazeData[y][x] === 1) {
+                        cell.classList.add('wall');
+                    } else if (mazeData[y][x] === 2) {
+                        cell.classList.add('goal');
+                    }
 
-                if (
-                    playerRect.top < wallRect.bottom &&
-                    playerRect.bottom > wallRect.top &&
-                    playerRect.left < wallRect.right &&
-                    playerRect.right > wallRect.left
-                ) {
-                    // Colisión detectada, redirigir a Game Over
-                    gameOver = true;
-                    window.location.href = 'gameover.html';
-                    return;
+                    // Posicionar al jugador
+                    if (x === playerPosition.x && y === playerPosition.y) {
+                        cell.classList.add('player');
+                    }
+
+                    maze.appendChild(cell);
                 }
             }
         }
 
-        // Verificar si el jugador gana
-        function checkWinCondition() {
-            let playerRect = player.getBoundingClientRect();
-            let endRect = endPoint.getBoundingClientRect();
+        // Mover al jugador
+        function movePlayer(dx, dy) {
+            const newX = playerPosition.x + dx;
+            const newY = playerPosition.y + dy;
 
-            if (
-                playerRect.top < endRect.bottom &&
-                playerRect.bottom > endRect.top &&
-                playerRect.left < endRect.right &&
-                playerRect.right > endRect.left
-            ) {
-                // Ganó el juego
-                alert("¡Ganaste el laberinto!");
-                window.location.href = 'index.html'; // Regresa al selector de juegos
+            if (mazeData[newY] && mazeData[newY][newX] !== 1) {
+                playerPosition = { x: newX, y: newY };
             }
+
+            // Verificar si el jugador toca la meta
+            if (playerPosition.x === goalPosition.x && playerPosition.y === goalPosition.y) {
+                setTimeout(() => {
+                    alert('¡Ganaste!');
+                    window.location.href = 'index.html'; // Redirigir al selector de juegos
+                }, 100);
+            }
+
+            renderMaze();
         }
 
-        // Temporizador de 60 segundos
-        function startTimer() {
-            timer = setInterval(() => {
-                timeLeft--;
-                timerDisplay.textContent = 'Tiempo: ' + timeLeft;
+        // Control de teclas
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowUp' || event.key === 'w') movePlayer(0, -1);
+            if (event.key === 'ArrowDown' || event.key === 's') movePlayer(0, 1);
+            if (event.key === 'ArrowLeft' || event.key === 'a') movePlayer(-1, 0);
+            if (event.key === 'ArrowRight' || event.key === 'd') movePlayer(1, 0);
 
-                if (timeLeft <= 0) {
-                    gameOver = true;
-                    clearInterval(timer);
-                    window.location.href = 'gameover.html';
-                }
-            }, 1000);
-        }
-
-        // Sistema de Debug para pasar el nivel automáticamente
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'c' && keysPressed['d'] && keysPressed['+']) {
-                // Pasar el nivel automáticamente
-                alert('Debug: Nivel completado');
-                window.location.href = 'index.html'; // Regresa al selector de juegos
+            // Debug para pasar el nivel automáticamente (presionar C, D, +)
+            if (event.key === 'c' && event.ctrlKey && event.shiftKey) {
+                playerPosition = { x: goalPosition.x, y: goalPosition.y };
+                renderMaze();
             }
         });
 
         // Iniciar el juego
-        startTimer();
-
-        // Mover al jugador cada 16ms
-        setInterval(movePlayer, 16);
+        generateMaze();
     </script>
 </body>
 </html>
