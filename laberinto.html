@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laberinto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f0f0f0;
+        }
+        #maze {
+            width: 300px;
+            height: 300px;
+            background: #ddd;
+            position: relative;
+            border: 2px solid #000;
+        }
+        #player {
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+        }
+        #timer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+        }
+        .wall {
+            position: absolute;
+            background-color: #333;
+        }
+        .end-point {
+            position: absolute;
+            background-color: green;
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="maze">
+        <div id="player"></div>
+        <div class="wall" style="top: 30px; left: 30px; width: 240px; height: 10px;"></div>
+        <div class="wall" style="top: 90px; left: 100px; width: 150px; height: 10px;"></div>
+        <div class="end-point" style="top: 270px; left: 270px;"></div>
+        <div id="timer">Tiempo: 60</div>
+    </div>
+
+    <script>
+        let player = document.getElementById('player');
+        let maze = document.getElementById('maze');
+        let timerDisplay = document.getElementById('timer');
+        let endPoint = document.querySelector('.end-point');
+        let walls = document.querySelectorAll('.wall');
+        let playerPos = { x: 0, y: 0 };
+        let gameOver = false;
+        let timeLeft = 60;
+        let timer;
+
+        // Movimiento del jugador
+        let keysPressed = {};
+        document.addEventListener('keydown', (e) => {
+            keysPressed[e.key] = true;
+        });
+        document.addEventListener('keyup', (e) => {
+            keysPressed[e.key] = false;
+        });
+
+        function movePlayer() {
+            if (gameOver) return;
+
+            if (keysPressed['ArrowUp'] || keysPressed['w']) {
+                playerPos.y -= 5;
+            }
+            if (keysPressed['ArrowDown'] || keysPressed['s']) {
+                playerPos.y += 5;
+            }
+            if (keysPressed['ArrowLeft'] || keysPressed['a']) {
+                playerPos.x -= 5;
+            }
+            if (keysPressed['ArrowRight'] || keysPressed['d']) {
+                playerPos.x += 5;
+            }
+
+            checkCollisions();
+            checkWinCondition();
+
+            // Actualizar la posición del jugador
+            player.style.left = playerPos.x + 'px';
+            player.style.top = playerPos.y + 'px';
+        }
+
+        // Verificar si el jugador colide con las paredes
+        function checkCollisions() {
+            for (let wall of walls) {
+                let wallRect = wall.getBoundingClientRect();
+                let playerRect = player.getBoundingClientRect();
+
+                if (
+                    playerRect.top < wallRect.bottom &&
+                    playerRect.bottom > wallRect.top &&
+                    playerRect.left < wallRect.right &&
+                    playerRect.right > wallRect.left
+                ) {
+                    // Colisión detectada, redirigir a Game Over
+                    gameOver = true;
+                    window.location.href = 'gameover.html';
+                    return;
+                }
+            }
+        }
+
+        // Verificar si el jugador gana
+        function checkWinCondition() {
+            let playerRect = player.getBoundingClientRect();
+            let endRect = endPoint.getBoundingClientRect();
+
+            if (
+                playerRect.top < endRect.bottom &&
+                playerRect.bottom > endRect.top &&
+                playerRect.left < endRect.right &&
+                playerRect.right > endRect.left
+            ) {
+                // Ganó el juego
+                alert("¡Ganaste el laberinto!");
+                window.location.href = 'index.html'; // Regresa al selector de juegos
+            }
+        }
+
+        // Temporizador de 60 segundos
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = 'Tiempo: ' + timeLeft;
+
+                if (timeLeft <= 0) {
+                    gameOver = true;
+                    clearInterval(timer);
+                    window.location.href = 'gameover.html';
+                }
+            }, 1000);
+        }
+
+        // Sistema de Debug para pasar el nivel automáticamente
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'c' && keysPressed['d'] && keysPressed['+']) {
+                // Pasar el nivel automáticamente
+                alert('Debug: Nivel completado');
+                window.location.href = 'index.html'; // Regresa al selector de juegos
+            }
+        });
+
+        // Iniciar el juego
+        startTimer();
+
+        // Mover al jugador cada 16ms
+        setInterval(movePlayer, 16);
+    </script>
+</body>
+</html>
