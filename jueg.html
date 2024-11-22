@@ -31,19 +31,38 @@
             font-size: 18px;
             cursor: pointer;
         }
+        button[disabled] {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
     <div id="game-container">
         <h1>Selecciona un Minijuego</h1>
-        <button onclick="playGame('laberinto')">Laberinto boo que miedo</button>
-        <button onclick="playGame('qte')">QTE</button>
-        <button onclick="playGame('flechasjsjs')">flechas o algo nose</button>
+        <button id="laberintoBtn" onclick="playGame('laberinto')" disabled>Laberinto boo que miedo</button>
+        <button id="qteBtn" onclick="playGame('qte')" disabled>QTE</button>
+        <button id="flechasBtn" onclick="playGame('flechasjsjs')" disabled>flechas o algo nose</button>
     </div>
 
     <script>
+        // Verificar el estado de los juegos y habilitar botones
+        window.onload = function() {
+            if (localStorage.getItem('laberintoCompleted') === 'true') {
+                document.getElementById('laberintoBtn').disabled = false;
+                document.getElementById('laberintoBtn').style.backgroundColor = "#4CAF50"; // Verde para indicar que está desbloqueado
+            }
+            if (localStorage.getItem('qteCompleted') === 'true') {
+                document.getElementById('qteBtn').disabled = false;
+                document.getElementById('qteBtn').style.backgroundColor = "#4CAF50";
+            }
+            if (localStorage.getItem('flechasCompleted') === 'true') {
+                document.getElementById('flechasBtn').disabled = false;
+                document.getElementById('flechasBtn').style.backgroundColor = "#4CAF50";
+            }
+        };
+
         function playGame(game) {
-            // Simulación de redirección
             setTimeout(() => {
                 if (game === 'laberinto') {
                     window.location.href = 'laberinto.html';
@@ -54,6 +73,20 @@
                 }
             }, 500); // Tiempo de espera antes de la redirección
         }
+
+        // Al completar un juego, establecer su estado en localStorage
+        function gameCompleted(game) {
+            if (game === 'laberinto') {
+                localStorage.setItem('laberintoCompleted', 'true');
+            } else if (game === 'qte') {
+                localStorage.setItem('qteCompleted', 'true');
+            } else if (game === 'flechasjsjs') {
+                localStorage.setItem('flechasCompleted', 'true');
+            }
+        }
+
+        // Llamar a esta función después de completar cada juego
+        // Ejemplo: Al completar el laberinto, usa gameCompleted('laberinto');
     </script>
 </body>
 </html>
