@@ -29,6 +29,7 @@
             margin: 10px;
             padding: 10px 20px;
             font-size: 18px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -42,11 +43,16 @@
 
     <script>
         function playGame(game) {
-            alert(`bro enserio cree que  ${game} , esta terminado`);
-            // Simulación de "perder" después de 3 segundos
+            // Simulación de redirección
             setTimeout(() => {
-                window.location.href = 'gameover.html';
-            }, 3000); 
+                if (game === 'laberinto') {
+                    window.location.href = 'laberinto.html';
+                } else if (game === 'qte') {
+                    window.location.href = 'qte.html';
+                } else if (game === 'flechasjsjs') {
+                    window.location.href = 'fnf.html';
+                }
+            }, 500); // Tiempo de espera antes de la redirección
         }
     </script>
 </body>
