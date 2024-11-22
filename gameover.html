@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Over</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+        }
+        #contenedor {
+            text-align: center;
+            color: white;
+            display: none; /* Oculto inicialmente */
+        }
+        img {
+            width: 400px;
+            height: auto;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="contenedor">
+        <h1>¡Game Over!</h1>
+        <button onclick="retry()">Intentar de nuevo</button>
+    </div>
+    <img id="pc" src="pc.png" alt="PC">
+    
+    <script>
+        let explosionSound = new Audio('explosion.mp3'); // Asegúrate de tener este sonido
+
+        setTimeout(() => {
+            document.getElementById('pc').src = 'explosion.gif'; // Imagen de explosión
+            explosionSound.play();
+        }, 2000);
+
+        setTimeout(() => {
+            document.getElementById('pc').style.display = 'none';
+            document.getElementById('contenedor').style.display = 'block';
+        }, 4000);
+
+        function retry() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
