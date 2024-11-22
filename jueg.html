@@ -3,24 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hola</title>
+    <title>Animación de Cuadrado</title>
     <style>
         body {
+            margin: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             background-color: #f0f0f0;
-            margin: 0;
         }
-        h1 {
-            font-size: 48px;
-            color: #333;
+
+        .contenedor {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border: 2px solid #000;
+            overflow: hidden;
+        }
+
+        .cuadrado-rojo {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 0, 0, 0.5); /* Rojo con transparencia */
+            border-radius: 5px;
+            animation: mover 5s linear forwards;
+        }
+
+        .cuadrado-blanco {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        @keyframes mover {
+            0% {
+                left: 0;
+            }
+            100% {
+                left: 350px; /* Movimiento hasta el cuadrado blanco */
+            }
         }
     </style>
 </head>
 <body>
-    <h1>hola,me llamo juan, y este es un placeholder</h1>
-    <!-- Inserta aquí el código del juego -->
+    <div class="contenedor">
+        <div class="cuadrado-rojo"></div>
+        <div class="cuadrado-blanco"></div>
+    </div>
 </body>
 </html>
