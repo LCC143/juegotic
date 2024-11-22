@@ -3,76 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cuadrado que Desaparece</title>
+    <title>Minijuegos Placeholder</title>
     <style>
         body {
-            margin: 0;
-            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f0f0f0;
+            height: 100vh;
+            background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fbc2eb);
+            animation: fondoAnimado 15s ease infinite;
         }
-
-        .contenedor {
-            position: relative;
-            width: 400px;
-            height: 400px;
-            border: 2px solid #000;
-            overflow: hidden;
+        @keyframes fondoAnimado {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-
-        .cuadrado-rojo {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 50px;
-            height: 50px;
-            background-color: rgba(255, 0, 0, 0.5); /* Rojo con transparencia */
-            border-radius: 5px;
-            animation: mover 5s linear forwards;
+        #game-container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
-
-        .cuadrado-blanco {
-            position: absolute;
-            top: 50%;
-            right: 0;
-            width: 50px;
-            height: 50px;
-            background-color: #fff;
-            border-radius: 5px;
-        }
-
-        @keyframes mover {
-            0% {
-                left: 0;
-            }
-            100% {
-                left: 350px; /* Movimiento hasta el cuadrado blanco */
-            }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <div class="contenedor">
-        <div class="cuadrado-rojo" id="cuadradoRojo"></div>
-        <div class="cuadrado-blanco"></div>
+    <div id="game-container">
+        <h1>Selecciona un Minijuego</h1>
+        <button onclick="playGame('laberinto')">Laberinto</button>
+        <button onclick="playGame('qte')">QTE</button>
+        <button onclick="playGame('fnf')">FNF</button>
     </div>
 
     <script>
-        // Función para detectar cuando el cuadrado rojo llega al cuadrado blanco
-        const cuadradoRojo = document.getElementById('cuadradoRojo');
-
-        // Esperamos a que la animación termine
-        cuadradoRojo.addEventListener('animationend', function() {
-            // Ahora que la animación terminó, habilitamos la funcionalidad de desaparecer con una tecla
-            document.addEventListener('keydown', function(event) {
-                // Detectamos si se presiona la tecla 'Enter' (puedes cambiarla por otra tecla)
-                if (event.key === 'Enter') {
-                    cuadradoRojo.style.display = 'none'; // Hacemos desaparecer el cuadrado
-                }
-            });
-        });
+        function playGame(game) {
+            alert(`Iniciando el minijuego: ${game}`);
+            // Simulación de "perder" después de 3 segundos
+            setTimeout(() => {
+                window.location.href = 'gameover.html';
+            }, 3000); 
+        }
     </script>
 </body>
 </html>
+
