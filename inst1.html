@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minijuego - Transferencia de Datos</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2e2e2e;
+            font-family: 'Courier New', Courier, monospace;
+            color: white;
+            overflow: hidden;
+        }
+
+        #cutscene {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .computer {
+            width: 150px;
+            height: 150px;
+            background-image: url('pc.png');
+            background-size: cover;
+            margin: 20px;
+            animation: fadeInComputer 1s ease-in-out;
+        }
+
+        @keyframes fadeInComputer {
+            0% { transform: translateY(-50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .data {
+            font-size: 32px;
+            color: #1e90ff;
+            margin: 10px;
+            opacity: 0;
+            animation: fadeInData 1s ease-in-out 1s forwards;
+        }
+
+        @keyframes fadeInData {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .dots {
+            display: inline-block;
+            animation: dotAnimation 2s infinite;
+        }
+
+        @keyframes dotAnimation {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+            100% { content: '.'; }
+        }
+
+        #file {
+            width: 50px;
+            height: 50px;
+            background-image: url('documenio2.png');
+            background-size: cover;
+            margin: 20px;
+            opacity: 0;
+            animation: moveFile 3s forwards;
+            position: relative;
+            left: 0;
+            transition: all 1s ease;
+        }
+
+        @keyframes moveFile {
+            0% { left: 0; opacity: 0; }
+            50% { left: 150px; opacity: 1; }
+            100% { left: 300px; opacity: 0; }
+        }
+
+        #instructions {
+            display: none; /* Inicia oculto */
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #maze-image {
+            width: 250px;
+            height: 250px;
+            margin: 20px auto;
+            background-image: url('mini lab.png');
+            background-size: cover;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .game-button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 18px;
+            color: white;
+            background-color: #32cd32;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .game-button:hover {
+            background-color: #228b22;
+        }
+
+        .game-button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="cutscene">
+    <!-- La imagen de la PC 1 -->
+    <div class="computer"></div>
+    <div class="data" id="data-transfer">Enviando datos<span class="dots" id="dots">.</span></div>
+    <!-- El archivo que se mueve -->
+    <div id="file"></div>
+    <!-- La imagen de la PC 2 -->
+    <div class="computer"></div>
+</div>
+
+<div id="instructions">
+    <h2>Instrucciones del Minijuego</h2>
+    <div id="maze-image"></div>
+    <p>Usa las teclas A, S, W, D para guiarte a través del laberinto.</p>
+    <p>Evita las paredes y llega al objetivo antes de que se acabe el tiempo.</p>
+    <button id="start-button" class="game-button">Iniciar Minijuego</button>
+</div>
+
+<script>
+    // Animación de la transferencia de datos
+    let dataTransferText = document.getElementById('data-transfer');
+    let cutscene = document.getElementById('cutscene');
+    let instructions = document.getElementById('instructions');
+    let startButton = document.getElementById('start-button');
+    let file = document.getElementById('file');
+    let dots = document.getElementById('dots');
+    
+    let dotCount = 1;
+    setInterval(() => {
+        if (dotCount < 3) {
+            dots.innerText += '.'; 
+            dotCount++;
+        } else {
+            dots.innerText = '.'; 
+            dotCount = 1;
+        }
+    }, 500); // Cambia el número de puntos cada 500 ms
+
+    setTimeout(() => {
+        // Empezamos a mover el archivo
+        file.style.opacity = 1; // Hacemos visible el archivo
+        setTimeout(() => {
+            // Transferencia en proceso, moviendo archivo
+            file.style.left = "300px"; // Simula el movimiento del archivo hacia la PC 2
+        }, 500);
+        
+        setTimeout(() => {
+            cutscene.style.display = 'none';
+            instructions.style.display = 'block'; // Después de la animación, mostramos las instrucciones sin animación
+        }, 4500); // Tiempo total para la animación
+
+    }, 3000); // Espera de 3 segundos antes de comenzar
+
+    startButton.addEventListener('click', () => {
+        window.location.href = 'laberinto.html'; // Redirige a la página del juego
+    });
+</script>
+
+</body>
+</html>

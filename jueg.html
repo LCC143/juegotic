@@ -3,91 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minijuegos Placeholder</title>
+    <title>Menú Animado</title>
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
             background: linear-gradient(270deg, #ff0000, #f3ff00, #003eff);
+            background-size: 400% 400%;
             animation: fondoAnimado 15s ease infinite;
         }
+
         @keyframes fondoAnimado {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        #game-container {
+
+        #menu-container {
             text-align: center;
             background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
         }
+
+        h1 {
+            opacity: 0;
+            animation: entradaTitulo 1.5s ease-out forwards;
+        }
+
+        @keyframes entradaTitulo {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         button {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 18px;
+            margin: 15px;
+            padding: 12px 30px;
+            font-size: 20px;
             cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: entradaBoton 1s ease-out forwards;
         }
-        button[disabled] {
-            background-color: #cccccc;
-            cursor: not-allowed;
+
+        button:nth-child(1) {
+            animation-delay: 0.3s;
+        }
+        
+        button:nth-child(2) {
+            animation-delay: 0.6s;
+        }
+
+        button:nth-child(3) {
+            animation-delay: 0.9s;
+        }
+
+        @keyframes entradaBoton {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
-<body>
-    <div id="game-container">
-        <h1>Selecciona un Minijuego</h1>
-        <button id="laberintoBtn" onclick="playGame('laberinto')" disabled>Laberinto boo que miedo</button>
-        <button id="qteBtn" onclick="playGame('qte')" disabled>QTE</button>
-        <button id="flechasBtn" onclick="playGame('flechasjsjs')" disabled>flechas o algo nose</button>
+<body>     
+    <audio id="menu-audio" autoplay loop>
+        <source src="menu.mp3" type="audio/mp3">
+    </audio>
+
+    <div id="menu-container">
+        <h1>minijuego rapido que hice para tic(hola profe)</h1>
+        <button onclick="iniciarJuego()">Iniciar</button>
+        <button onclick="mostrarConfiguracion()">Configuración</button>
+        <button onclick="mostrarExtras()">Extras</button>
     </div>
 
     <script>
-        // Verificar el estado de los juegos y habilitar botones
-        window.onload = function() {
-            if (localStorage.getItem('laberintoCompleted') === 'true') {
-                document.getElementById('laberintoBtn').disabled = false;
-                document.getElementById('laberintoBtn').style.backgroundColor = "#4CAF50"; // Verde para indicar que está desbloqueado
-            }
-            if (localStorage.getItem('qteCompleted') === 'true') {
-                document.getElementById('qteBtn').disabled = false;
-                document.getElementById('qteBtn').style.backgroundColor = "#4CAF50";
-            }
-            if (localStorage.getItem('flechasCompleted') === 'true') {
-                document.getElementById('flechasBtn').disabled = false;
-                document.getElementById('flechasBtn').style.backgroundColor = "#4CAF50";
-            }
-        };
-
-        function playGame(game) {
-            setTimeout(() => {
-                if (game === 'laberinto') {
-                    window.location.href = 'laberinto.html';
-                } else if (game === 'qte') {
-                    window.location.href = 'qte.html';
-                } else if (game === 'flechasjsjs') {
-                    window.location.href = 'fnf.html';
-                }
-            }, 500); // Tiempo de espera antes de la redirección
+        function iniciarJuego() {
+            window.location.href = 'inst1.html';  
         }
 
-        // Al completar un juego, establecer su estado en localStorage
-        function gameCompleted(game) {
-            if (game === 'laberinto') {
-                localStorage.setItem('laberintoCompleted', 'true');
-            } else if (game === 'qte') {
-                localStorage.setItem('qteCompleted', 'true');
-            } else if (game === 'flechasjsjs') {
-                localStorage.setItem('flechasCompleted', 'true');
-            }
+        function mostrarConfiguracion() {
+            alert("no tengo tiempo ni ganas para hacer un menu de configuracion,gracias por leer");
         }
 
-        // Llamar a esta función después de completar cada juego
-        // Ejemplo: Al completar el laberinto, usa gameCompleted('laberinto');
+        function mostrarExtras() {
+            alert("enserio pensaste que esto iba a tener extras?");
+        }
     </script>
+
 </body>
 </html>
-
